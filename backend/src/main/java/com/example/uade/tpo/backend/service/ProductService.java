@@ -7,6 +7,8 @@ import com.example.uade.tpo.backend.models.Product;
 import com.example.uade.tpo.backend.repository.ImagesRepository;
 import com.example.uade.tpo.backend.repository.ProductRepository;
 import com.example.uade.tpo.backend.repository.UserRepository;
+import com.example.uade.tpo.backend.service.interfaces.ProductServiceInterface;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ProductService {
+public class ProductService implements ProductServiceInterface{
     @Autowired
     UserRepository userRepository;
     @Autowired

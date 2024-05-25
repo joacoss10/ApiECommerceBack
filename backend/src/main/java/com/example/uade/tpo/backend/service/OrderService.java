@@ -5,9 +5,10 @@ import com.example.uade.tpo.backend.auxiliar.CartModel;
 import com.example.uade.tpo.backend.auxiliar.ProductModel;
 import com.example.uade.tpo.backend.models.*;
 import com.example.uade.tpo.backend.repository.*;
+import com.example.uade.tpo.backend.service.interfaces.OrderServiceInterface;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class OrderService {
+public class OrderService implements OrderServiceInterface{
 
     @Autowired
     CartService cartService;
@@ -103,7 +104,7 @@ public class OrderService {
 
     }
 
-    private boolean checkStock(List<ProductModel> productModels){
+    public boolean checkStock(List<ProductModel> productModels){
         Optional<Product> optionalProduct;
         for (ProductModel productModel : productModels){
             optionalProduct = productRepository.findById(productModel.getId());

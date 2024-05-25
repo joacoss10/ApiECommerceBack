@@ -6,6 +6,8 @@ import com.example.uade.tpo.backend.models.Cart;
 import com.example.uade.tpo.backend.models.User;
 import com.example.uade.tpo.backend.repository.CartRepository;
 import com.example.uade.tpo.backend.repository.UserRepository;
+import com.example.uade.tpo.backend.service.interfaces.UserServiceInterface;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 @Service
-public class UserService {
+public class UserService implements UserServiceInterface{
     @Autowired
     private UserRepository userRepository;
 
