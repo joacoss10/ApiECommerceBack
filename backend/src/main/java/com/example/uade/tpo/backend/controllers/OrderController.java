@@ -1,6 +1,7 @@
 package com.example.uade.tpo.backend.controllers;
 
 
+import com.example.uade.tpo.backend.auxiliar.CartModel;
 import com.example.uade.tpo.backend.models.Orden;
 import com.example.uade.tpo.backend.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +18,8 @@ public class OrderController {
     OrderService orderService;
 
     @PostMapping("/create")
-    public ResponseEntity<String> createOrder(@RequestParam long id_cart){
-        return orderService.createOrder(id_cart);
+    public ResponseEntity<String> createOrder(@RequestBody CartModel cartModel){
+        return orderService.createOrder(cartModel);
     }
 
     @GetMapping("/get")

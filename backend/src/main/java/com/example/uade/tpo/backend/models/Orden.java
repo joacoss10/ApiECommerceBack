@@ -22,5 +22,9 @@ public class Orden {
     @OneToMany(mappedBy = "orden")
     private List<OrdenElement> ordenElementsList;
 
+    @OneToOne
+    @JoinColumn(name = "id_pago")
+    private Pago pago;
+
 
 }
