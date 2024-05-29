@@ -1,7 +1,9 @@
 package com.example.uade.tpo.backend.models;
 import jakarta.persistence.*;
 import lombok.Data;
-import java.util.Date;
+
+import java.time.LocalDateTime;
+
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -28,10 +30,9 @@ public class Pago {
     @Column(nullable = false)
     private String currency;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     @Column(nullable = false)
-    private Date fechaPago;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime fechaPago;
 
     @Column(nullable = false)
     private String estado;
