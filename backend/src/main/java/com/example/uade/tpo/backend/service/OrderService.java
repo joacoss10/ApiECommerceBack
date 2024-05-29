@@ -19,8 +19,7 @@ import java.util.Optional;
 @Service
 public class OrderService implements OrderServiceInterface{
 
-    @Autowired
-    CartService cartService;
+    
     @Autowired
     ProductService productService;
     @Autowired
@@ -28,15 +27,12 @@ public class OrderService implements OrderServiceInterface{
     @Autowired
     OrderElementRepository orderElementRepository;
     @Autowired
-    CartElementRepository cartElementRepository;
-    @Autowired
     UserRepository userRepository;
-    @Autowired
-    CartRepository cartRepository;
     @Autowired
     PagoRespository pagoRespository;
     @Autowired
     ProductRepository productRepository;
+    
 
     public ResponseEntity<String> createOrder(CartModel cartModel){
         

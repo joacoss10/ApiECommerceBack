@@ -2,9 +2,7 @@ package com.example.uade.tpo.backend.service;
 
 
 import com.example.uade.tpo.backend.auxiliar.Login;
-import com.example.uade.tpo.backend.models.Cart;
 import com.example.uade.tpo.backend.models.User;
-import com.example.uade.tpo.backend.repository.CartRepository;
 import com.example.uade.tpo.backend.repository.UserRepository;
 import com.example.uade.tpo.backend.service.interfaces.UserServiceInterface;
 
@@ -19,8 +17,7 @@ public class UserService implements UserServiceInterface{
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private CartRepository cartRepository;
+    
 
     public ResponseEntity<String> altaUsuario(User user){
         if (userRepository.findByUsername(user.getUsername())!=null) {
@@ -32,9 +29,6 @@ public class UserService implements UserServiceInterface{
 
                 userRepository.save(user);
 
-                Cart cart = new Cart();
-                cart.setUsuario(user);
-                cartRepository.save(cart);
 
                 return ResponseEntity.ok("ok");
             } catch (Exception e) {

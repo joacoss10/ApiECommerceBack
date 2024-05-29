@@ -38,9 +38,7 @@ public class User {
     @JsonIgnore
     @OneToMany(mappedBy = "usuario")            //con mappedby apunto a la variable de la otra tabla que se relaciona con esta    y en esa variable le pongo @JoinColumn
     private List<Orden> ordenList;
-    @JsonIgnore
-    @OneToOne(mappedBy = "usuario")
-    private Cart cart;
+    
 
 
 }
