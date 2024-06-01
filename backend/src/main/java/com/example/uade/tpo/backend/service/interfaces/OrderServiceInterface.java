@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import com.example.uade.tpo.backend.auxiliar.OrderResponse;
 import com.example.uade.tpo.backend.auxiliar.cart.CartModel;
 import com.example.uade.tpo.backend.auxiliar.cart.ProductModel;
-import com.example.uade.tpo.backend.models.Orden;
 
 public interface OrderServiceInterface {
 
