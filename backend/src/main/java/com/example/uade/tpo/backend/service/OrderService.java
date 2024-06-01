@@ -1,8 +1,10 @@
 package com.example.uade.tpo.backend.service;
 
 
-import com.example.uade.tpo.backend.auxiliar.CartModel;
-import com.example.uade.tpo.backend.auxiliar.ProductModel;
+import com.example.uade.tpo.backend.auxiliar.OrderElementResponse;
+import com.example.uade.tpo.backend.auxiliar.OrderResponse;
+import com.example.uade.tpo.backend.auxiliar.cart.CartModel;
+import com.example.uade.tpo.backend.auxiliar.cart.ProductModel;
 import com.example.uade.tpo.backend.models.*;
 import com.example.uade.tpo.backend.repository.*;
 import com.example.uade.tpo.backend.service.interfaces.OrderServiceInterface;
@@ -12,7 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -87,13 +91,17 @@ public class OrderService implements OrderServiceInterface{
 
 
 
-    public ResponseEntity<List<Orden>> getOrderByUserId(long id_user){
+    public ResponseEntity<List<OrderResponse>> getOrderByUserId(String username) throws IOException, SQLException{
 
-        Optional<User> optionalUser = userRepository.findById(id_user);
+        Optional<User> optionalUser = Optional.of(userRepository.findByUsername(username));
         if (optionalUser.isPresent()){
             List<Orden> ordenList = optionalUser.get().getOrdenList();
+            List<OrderResponse> orderResponses = new ArrayList<>();
+            for (Orden orden : ordenList){
+                orderResponses.add(convertOrderResponse(orden));
+            }
 
-            return ResponseEntity.ok(ordenList);
+            return ResponseEntity.ok(orderResponses);
         }else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
@@ -112,5 +120,23 @@ public class OrderService implements OrderServiceInterface{
             }else return false;
         }
         return true;
+    }
+
+    public OrderResponse convertOrderResponse(Orden orden) throws IOException, SQLException{
+        List<OrderElementResponse> orderElementResponses = new ArrayList<>();
+        for (OrdenElement ordenElement : orden.getOrdenElementsList()){
+            orderElementResponses.add(OrderElementResponse.builder()
+            .id(ordenElement.getId())
+            .cantidad(ordenElement.getCantidad())
+            .productResponse(productService.convertProduct(ordenElement.getProduct()))
+            .build());
+        }
+
+        return OrderResponse.builder()
+            .id(orden.getId())
+            .pago(orden.getPago())
+            .usuario(orden.getUsuario())
+            .ordenElementsList(orderElementResponses)
+            .build();
     }
 }

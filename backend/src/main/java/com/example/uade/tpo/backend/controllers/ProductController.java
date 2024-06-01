@@ -43,12 +43,21 @@ public class ProductController {
     }
 
     @GetMapping("/get")
-    public ResponseEntity<List<Product>> getProducts(
+    public ResponseEntity<List<ProductResponse>> getProducts(
             @RequestParam(name = "categoria", required = false) String categoria,
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "pageSize", defaultValue = "2") int pageSize
-    ) {
+    ) throws IOException, SQLException {
         return productService.getProducts(categoria, page, pageSize);
+    }
+
+    @GetMapping("/getByUsername")
+    public ResponseEntity<List<ProductResponse>> getProductsByUsername(
+            @RequestParam(name = "username", required = false) String username,
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "pageSize", defaultValue = "2") int pageSize
+    ) throws IOException, SQLException {
+        return productService.getProductsByUsername(username, page, pageSize);
     }
 
     @PutMapping("/edit")

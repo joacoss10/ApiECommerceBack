@@ -1,4 +1,4 @@
-package com.example.uade.tpo.backend.auxiliar;
+package com.example.uade.tpo.backend.auxiliar.cart;
 
 import lombok.Data;
 

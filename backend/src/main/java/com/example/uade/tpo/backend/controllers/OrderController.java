@@ -1,13 +1,16 @@
 package com.example.uade.tpo.backend.controllers;
 
 
-import com.example.uade.tpo.backend.auxiliar.CartModel;
+import com.example.uade.tpo.backend.auxiliar.OrderResponse;
+import com.example.uade.tpo.backend.auxiliar.cart.CartModel;
 import com.example.uade.tpo.backend.models.Orden;
 import com.example.uade.tpo.backend.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 @RestController
@@ -23,8 +26,8 @@ public class OrderController {
     }
 
     @GetMapping("/get")
-    public ResponseEntity<List<Orden>> getOrderByUserId(@RequestParam long id_user){
-        return orderService.getOrderByUserId(id_user);
+    public ResponseEntity<List<OrderResponse>> getOrderByUserId(@RequestParam String username) throws IOException, SQLException{
+        return orderService.getOrderByUserId(username);
     }
 
 }

@@ -5,10 +5,8 @@ import com.example.uade.tpo.backend.auxiliar.ProductResponse;
 import com.example.uade.tpo.backend.auxiliar.Producto;
 import com.example.uade.tpo.backend.auxiliar.img.ImageResponse;
 import com.example.uade.tpo.backend.models.Image;
-import com.example.uade.tpo.backend.models.Images;
 import com.example.uade.tpo.backend.models.Product;
 import com.example.uade.tpo.backend.repository.ImageRepository;
-import com.example.uade.tpo.backend.repository.ImagesRepository;
 import com.example.uade.tpo.backend.repository.ProductRepository;
 import com.example.uade.tpo.backend.repository.UserRepository;
 import com.example.uade.tpo.backend.service.interfaces.ProductServiceInterface;
@@ -93,8 +91,9 @@ public class ProductService implements ProductServiceInterface{
 
     //GET PRODUCT
 
-    public ResponseEntity<List<Product>> getProducts(String categoria, int page, int pageSize){
+    public ResponseEntity<List<ProductResponse>> getProducts(String categoria, int page, int pageSize) throws IOException, SQLException{
         if (categoria == null || categoria.isEmpty() && page > 0 && pageSize > 0) {
+            List<ProductResponse> productResponses = new ArrayList<>();
             Pageable pageable = PageRequest.of(page - 1, pageSize);
 
 
@@ -104,9 +103,27 @@ public class ProductService implements ProductServiceInterface{
             if (productSlice.hasContent()) {
 
                 List<Product> products = productSlice.getContent();
-                return ResponseEntity.ok(products);
+                for (Product product : products){
+                    productResponses.add(convertProduct(product));
+                }
+                return ResponseEntity.ok(productResponses);
             } else {
 
+                return ResponseEntity.notFound().build();
+            }
+        }else if (page > 0 && pageSize > 0) {
+            List<ProductResponse> productResponses = new ArrayList<>();
+            Pageable pageable = PageRequest.of(page - 1, pageSize);
+
+            Slice<Product> productSlice = productRepository.findByCategoria(categoria, pageable);
+
+            if (productSlice.hasContent()) {
+                List<Product> products = productSlice.getContent();
+                for (Product product : products) {
+                    productResponses.add(convertProduct(product));
+                }
+                return ResponseEntity.ok(productResponses);
+            } else {
                 return ResponseEntity.notFound().build();
             }
         }
@@ -138,14 +155,13 @@ public class ProductService implements ProductServiceInterface{
 
         if (productOptional.isPresent()) {
             Product product = productOptional.get();
-            /*
-                                                                        CAMBIAR
-            if (product.getImagenURL()!=null){
-                for (Images images : product.getImagenURL()){
-                    imagesRepository.delete(images);
+            
+
+            if (product.getImageList()!=null){
+                for (Image image : product.getImageList()){
+                    imageRepository.delete(image);
                 }
             }
-             */
 
             productRepository.delete(product);
             return ResponseEntity.ok("Producto eliminado con éxito");
@@ -184,8 +200,32 @@ public class ProductService implements ProductServiceInterface{
             .precio(product.getPrecio())
             .stockDisponible(product.getStockDisponible())
             .username_vendedor(product.getVendedor().getUsername())
-            //.files(images)
-            .files(null)
+            .files(images)
+            //.files(null)
             .build();
+    }
+
+    
+    public ResponseEntity<List<ProductResponse>> getProductsByUsername(String username, int page, int pageSize)
+            throws IOException, SQLException {
+        
+        if (username != null && !username.isEmpty() && page > 0 && pageSize > 0) {
+            List<ProductResponse> productResponses = new ArrayList<>();
+            Pageable pageable = PageRequest.of(page - 1, pageSize);
+            
+            Slice<Product> productSlice = productRepository.findByVendedor(userRepository.findByUsername(username), pageable);
+            
+            if (productSlice.hasContent()) {
+                List<Product> products = productSlice.getContent();
+                for (Product product : products) {
+                    productResponses.add(convertProduct(product));
+                }
+                return ResponseEntity.ok(productResponses);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        }
+                
+        return ResponseEntity.badRequest().build();
     }
 }
