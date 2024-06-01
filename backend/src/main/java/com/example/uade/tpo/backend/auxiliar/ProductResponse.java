@@ -1,12 +1,17 @@
 package com.example.uade.tpo.backend.auxiliar;
 
-import lombok.Data;
-
 import java.util.List;
 
-import org.springframework.web.multipart.MultipartFile;
+import com.example.uade.tpo.backend.auxiliar.img.ImageResponse;
+
+import lombok.Builder;
+import lombok.Data;
+
+
 @Data
-public class Producto {
+@Builder
+public class ProductResponse {
+    private Long id;
     private String nombre;
     private String descripcion;
     private String categoria;
@@ -17,9 +22,7 @@ public class Producto {
 
     private int stockDisponible;
 
-    private List<String> imagenURL;
-
-    private List <MultipartFile> files;
+    private List <ImageResponse> files;
 
     private String username_vendedor;
 

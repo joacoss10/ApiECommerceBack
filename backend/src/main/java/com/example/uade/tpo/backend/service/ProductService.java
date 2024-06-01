@@ -1,9 +1,13 @@
 package com.example.uade.tpo.backend.service;
 
 
+import com.example.uade.tpo.backend.auxiliar.ProductResponse;
 import com.example.uade.tpo.backend.auxiliar.Producto;
+import com.example.uade.tpo.backend.auxiliar.img.ImageResponse;
+import com.example.uade.tpo.backend.models.Image;
 import com.example.uade.tpo.backend.models.Images;
 import com.example.uade.tpo.backend.models.Product;
+import com.example.uade.tpo.backend.repository.ImageRepository;
 import com.example.uade.tpo.backend.repository.ImagesRepository;
 import com.example.uade.tpo.backend.repository.ProductRepository;
 import com.example.uade.tpo.backend.repository.UserRepository;
@@ -16,8 +20,13 @@ import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-
+import java.io.IOException;
+import java.sql.Blob;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,7 +37,7 @@ public class ProductService implements ProductServiceInterface{
     @Autowired
     ProductRepository productRepository;
     @Autowired
-    ImagesRepository imagesRepository;
+    ImageRepository imageRepository;
 
     //CREATE PRODUCT
 
@@ -47,16 +56,32 @@ public class ProductService implements ProductServiceInterface{
             product.setPrecio(producto.getPrecio());
 
             //System.out.println(product.getId_producto());
-            product.setImagenURL(null);
+            //product.setImagenURL(null);
+            product.setImageList(null);
             productRepository.save(product);
             //System.out.println("hasta aca llegamos " + product.getId_producto());
 
-
+            /* 
             for (String url : producto.getImagenURL()){
                 Images images = new Images();
                 images.setUrl(url);
                 images.setProduct(product);
                 imagesRepository.save(images);
+            }
+            */
+            for (MultipartFile iMultipartFile : producto.getFiles()){
+                Image image = new Image();
+                
+                byte[] bytes = iMultipartFile.getBytes();
+                Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);
+                
+                System.out.println("blob: "+ blob);
+
+                image.setImage(blob);
+                image.setProduct(product);
+
+                imageRepository.save(image);
+                
             }
             return ResponseEntity.ok("Producto creado con exito");
         }
@@ -113,12 +138,14 @@ public class ProductService implements ProductServiceInterface{
 
         if (productOptional.isPresent()) {
             Product product = productOptional.get();
-
+            /*
+                                                                        CAMBIAR
             if (product.getImagenURL()!=null){
                 for (Images images : product.getImagenURL()){
                     imagesRepository.delete(images);
                 }
             }
+             */
 
             productRepository.delete(product);
             return ResponseEntity.ok("Producto eliminado con éxito");
@@ -129,7 +156,36 @@ public class ProductService implements ProductServiceInterface{
         }
     }
 
-    public List<Product> testingg(){
-        return productRepository.findAll();
+    public List<ProductResponse> testingg() throws IOException, SQLException{
+        List<ProductResponse> productResponses = new ArrayList<>();
+        for (Product product : productRepository.findAll()){
+            productResponses.add(convertProduct(product));
+        }
+
+        return productResponses;
+    }
+
+    public ProductResponse convertProduct (Product product)  throws IOException, SQLException {
+
+        List<ImageResponse> images = new ArrayList<ImageResponse>();
+        
+
+        for (Image image : product.getImageList()){
+            images.add(ImageResponse.builder().id(image.getId()).content(Base64.getEncoder().encodeToString(image.getImage().getBytes(1, (int) image.getImage().length()))).build());
+        }
+
+        
+        return ProductResponse
+            .builder()
+            .id(product.getId_producto())
+            .nombre(product.getNombre())
+            .categoria(product.getCategoria())
+            .descripcion(product.getDescripcion())
+            .precio(product.getPrecio())
+            .stockDisponible(product.getStockDisponible())
+            .username_vendedor(product.getVendedor().getUsername())
+            //.files(images)
+            .files(null)
+            .build();
     }
 }

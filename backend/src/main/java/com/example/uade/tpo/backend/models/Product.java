@@ -7,6 +7,8 @@ import lombok.Data;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "Product")
 @Data
@@ -32,10 +34,15 @@ public class Product {
     private int stockDisponible;
 
 
+    /* 
+    @OneToMany(mappedBy = "product")
+    @Nullable
+    private List<Images> imagenURL;*/
+
 
     @OneToMany(mappedBy = "product")
     @Nullable
-    private List<Images> imagenURL;
+    private List<Image> imageList;
 
     @ManyToOne
     @JoinColumn(name = "id_user")
@@ -45,11 +52,12 @@ public class Product {
     /*
     @OneToMany(mappedBy = "product")
     private List<CartElement> cartElementList;
-
+*/
     @OneToMany(mappedBy = "product")
+    @JsonIgnore
     private List<OrdenElement> ordenElementList;
 
-     */
+     
 
 
 }
