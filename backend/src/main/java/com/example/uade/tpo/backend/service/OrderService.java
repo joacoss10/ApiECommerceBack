@@ -55,6 +55,8 @@ public class OrderService implements OrderServiceInterface{
             orden.setPago(pago);
 
             orden.setUsuario(compradorOptional.get());
+
+            orden.setEntregado(false);
             
             orden = orderRepository.save(orden);
 
@@ -87,6 +89,8 @@ public class OrderService implements OrderServiceInterface{
         
     }
 
+    
+
 
 
 
@@ -113,8 +117,7 @@ public class OrderService implements OrderServiceInterface{
         for (ProductModel productModel : productModels){
             optionalProduct = productRepository.findById(productModel.getId());
             if(optionalProduct.isPresent()){
-                if (optionalProduct.get().getStockDisponible() <= productModel.getCant()){
-                    System.out.println("mal stock");
+                if (optionalProduct.get().getStockDisponible() < productModel.getCant()){
                     return false;
                 }
             }else return false;
@@ -131,12 +134,26 @@ public class OrderService implements OrderServiceInterface{
             .productResponse(productService.convertProduct(ordenElement.getProduct()))
             .build());
         }
+        
 
         return OrderResponse.builder()
             .id(orden.getId())
             .pago(orden.getPago())
             .usuario(orden.getUsuario())
             .ordenElementsList(orderElementResponses)
+            .entregado(orden.getEntregado())
             .build();
+    }
+
+    @Override
+    public ResponseEntity<String> setEntregadoTrue(long id) {
+        Optional<Orden> optionalOrder = orderRepository.findById(id);
+        if (optionalOrder.isPresent()){
+            Orden orden = optionalOrder.get();
+            orden.setEntregado(true);
+            orderRepository.save(orden);
+            return ResponseEntity.ok().body("Pedido entregado");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pedido no encontrado");
     }
 }

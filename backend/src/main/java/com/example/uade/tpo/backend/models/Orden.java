@@ -22,9 +22,15 @@ public class Orden {
     @OneToMany(mappedBy = "orden")
     private List<OrdenElement> ordenElementsList;
 
+    @Column(nullable = false)
+    private boolean entregado;
+
     @OneToOne
     @JoinColumn(name = "id_pago")
     private Pago pago;
 
 
+    public boolean getEntregado(){
+        return this.entregado;
+    }
 }

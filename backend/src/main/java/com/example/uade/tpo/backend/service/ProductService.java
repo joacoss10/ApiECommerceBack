@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+
+import javax.sql.rowset.serial.SerialException;
 
 @Service
 public class ProductService implements ProductServiceInterface{
@@ -53,27 +56,17 @@ public class ProductService implements ProductServiceInterface{
             product.setStockDisponible(producto.getStockDisponible());
             product.setPrecio(producto.getPrecio());
 
-            //System.out.println(product.getId_producto());
-            //product.setImagenURL(null);
+            
             product.setImageList(null);
             productRepository.save(product);
-            //System.out.println("hasta aca llegamos " + product.getId_producto());
-
-            /* 
-            for (String url : producto.getImagenURL()){
-                Images images = new Images();
-                images.setUrl(url);
-                images.setProduct(product);
-                imagesRepository.save(images);
-            }
-            */
+            
             for (MultipartFile iMultipartFile : producto.getFiles()){
                 Image image = new Image();
                 
                 byte[] bytes = iMultipartFile.getBytes();
                 Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);
                 
-                System.out.println("blob: "+ blob);
+                
 
                 image.setImage(blob);
                 image.setProduct(product);
@@ -227,5 +220,35 @@ public class ProductService implements ProductServiceInterface{
         }
                 
         return ResponseEntity.badRequest().build();
+    }
+
+    public ResponseEntity<String> deleteImage(Long id){
+        if (imageRepository.findById(id).isPresent()){
+            imageRepository.deleteById(id);
+            return ResponseEntity.ok().body("Imagen eliminada con exito");
+        } 
+        else return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Imagen no encontrada");
+    }
+
+    public ResponseEntity<String> addImage(Long id, MultipartFile file) throws SerialException, SQLException, IOException{
+        Optional<Product> product = productRepository.findById(id);
+
+        if (product.isPresent()){
+            Product p = product.get();
+            Image image = new Image();
+                
+            byte[] bytes = file.getBytes();
+            Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);
+                    
+            image.setImage(blob);
+            image.setProduct(p);
+    
+            imageRepository.save(image);
+            return ResponseEntity.ok().body("Imagen añadida con exito");
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Producto no encontrado");
+        }
+        
     }
 }

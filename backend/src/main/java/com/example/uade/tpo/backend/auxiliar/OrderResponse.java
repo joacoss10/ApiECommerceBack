@@ -20,5 +20,7 @@ public class OrderResponse {
 
     private List<OrderElementResponse> ordenElementsList;
 
+    private boolean entregado;
+
     private Pago pago;
 }

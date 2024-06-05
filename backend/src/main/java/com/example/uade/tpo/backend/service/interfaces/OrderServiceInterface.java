@@ -20,6 +20,8 @@ public interface OrderServiceInterface {
 
     public boolean checkStock(List<ProductModel> productModels);
 
+    public ResponseEntity<String> setEntregadoTrue(long id);
+
 
 
 }

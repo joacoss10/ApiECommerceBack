@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.sql.rowset.serial.SerialException;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.uade.tpo.backend.auxiliar.ProductResponse;
 import com.example.uade.tpo.backend.auxiliar.Producto;
@@ -26,10 +29,15 @@ public interface ProductServiceInterface {
     
     public ResponseEntity<String>  editStockProduct(Product product);
 
+    public ResponseEntity<String> addImage(Long id, MultipartFile file) throws SerialException, SQLException, IOException;
+
 
     //ELIMINAR POR ID
 
     public ResponseEntity<String>  deleteProd(Long id);
+
+
+    public ResponseEntity<String> deleteImage(Long id);
 
     
     

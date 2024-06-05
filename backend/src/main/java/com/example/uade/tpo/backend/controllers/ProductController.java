@@ -14,6 +14,13 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.sql.rowset.serial.SerialException;
+
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
+
+
 @RestController
 @RequestMapping("product")
 public class ProductController {
@@ -69,6 +76,20 @@ public class ProductController {
     public ResponseEntity<String> deleteProd(@RequestParam Long id) {
 
         return productService.deleteProd(id);
+    }
+
+    @DeleteMapping("/delete/image/")
+    public ResponseEntity<String> deleteImage(Long id){
+        return productService.deleteImage(id);
+    }
+
+    @PutMapping(value = "add/image", consumes = "multipart/form-data")
+    public ResponseEntity<String> putMethodName(
+        @RequestParam("id") Long id_producto,
+        @RequestParam("file") MultipartFile file) throws SerialException, SQLException, IOException {
+        //TODO: process PUT request
+        
+        return productService.addImage(id_producto, file);
     }
 
     @GetMapping("/test")
