@@ -11,7 +11,7 @@ import lombok.Data;
 @Data
 public class CartModel {
 
-    private long id_comprador;
+    private String username_comprador;
 
     private List<ProductModel> productList;
 

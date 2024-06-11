@@ -40,7 +40,7 @@ public class OrderService implements OrderServiceInterface{
 
     public ResponseEntity<String> createOrder(CartModel cartModel){
         
-        Optional<User> compradorOptional = userRepository.findById(cartModel.getId_comprador());
+        Optional<User> compradorOptional = Optional.of(userRepository.findByUsername(cartModel.getUsername_comprador()));
         if (compradorOptional.isPresent()){
             if (!checkStock(cartModel.getProductList())){
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("No hay stock de todos los productos");
