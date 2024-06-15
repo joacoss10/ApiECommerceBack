@@ -2,6 +2,7 @@ package com.example.uade.tpo.backend.controllers;
 
 
 import com.example.uade.tpo.backend.auxiliar.Login;
+import com.example.uade.tpo.backend.auxiliar.LoginResponse;
 import com.example.uade.tpo.backend.models.User;
 import com.example.uade.tpo.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,14 +21,14 @@ public class UserController {
 
 
     @PostMapping("/create")
-    @CrossOrigin(origins = "http://localhost:5173")
-    public ResponseEntity<String> altaUsuario(@RequestBody User user){
+    @CrossOrigin()
+    public ResponseEntity<LoginResponse> altaUsuario(@RequestBody User user){
         return userService.altaUsuario(user);
     }
 
-    @CrossOrigin(origins = "http://localhost:5173")
-    @GetMapping("/login")
-    public ResponseEntity<String> login(@RequestBody Login login){
+    @CrossOrigin()
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@RequestBody Login login){
         return userService.login(login);
 
     }

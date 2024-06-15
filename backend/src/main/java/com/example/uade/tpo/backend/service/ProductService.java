@@ -6,6 +6,7 @@ import com.example.uade.tpo.backend.auxiliar.Producto;
 import com.example.uade.tpo.backend.auxiliar.img.ImageResponse;
 import com.example.uade.tpo.backend.models.Image;
 import com.example.uade.tpo.backend.models.Product;
+import com.example.uade.tpo.backend.models.User;
 import com.example.uade.tpo.backend.repository.ImageRepository;
 import com.example.uade.tpo.backend.repository.ProductRepository;
 import com.example.uade.tpo.backend.repository.UserRepository;
@@ -47,8 +48,8 @@ public class ProductService implements ProductServiceInterface{
     ){
         try {
             Product product = new Product();
-
-            product.setVendedor(userRepository.findByUsername(producto.getUsername_vendedor()));
+            Optional<User> vendedorOptional = userRepository.findByUsername(producto.getUsername_vendedor());
+            product.setVendedor(vendedorOptional.get());
             product.setNombre(producto.getNombre());
             product.setDescripcion(producto.getDescripcion());
             product.setCategoria(producto.getCategoria());
@@ -204,8 +205,8 @@ public class ProductService implements ProductServiceInterface{
         if (username != null && !username.isEmpty() && page > 0 && pageSize > 0) {
             List<ProductResponse> productResponses = new ArrayList<>();
             Pageable pageable = PageRequest.of(page - 1, pageSize);
-            
-            Slice<Product> productSlice = productRepository.findByVendedor(userRepository.findByUsername(username), pageable);
+            Optional<User> vendedorOptional = userRepository.findByUsername(username);
+            Slice<Product> productSlice = productRepository.findByVendedor(vendedorOptional.get(), pageable);
             
             if (productSlice.hasContent()) {
                 List<Product> products = productSlice.getContent();

@@ -2,61 +2,74 @@ package com.example.uade.tpo.backend.service;
 
 
 import com.example.uade.tpo.backend.auxiliar.Login;
+import com.example.uade.tpo.backend.auxiliar.LoginResponse;
+import com.example.uade.tpo.backend.controllers.config.JwtService;
 import com.example.uade.tpo.backend.models.User;
 import com.example.uade.tpo.backend.repository.UserRepository;
 import com.example.uade.tpo.backend.service.interfaces.UserServiceInterface;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
+//import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 @Service
+@RequiredArgsConstructor
 public class UserService implements UserServiceInterface{
-    @Autowired
-    private UserRepository userRepository;
+    
+    private final UserRepository userRepository;
 
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
     
 
-    public ResponseEntity<String> altaUsuario(User user){
-        if (userRepository.findByUsername(user.getUsername())!=null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("userError");
-        } else if (userRepository.findByMail(user.getMail())!=null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("mailError");
+    public ResponseEntity<LoginResponse> altaUsuario(User user){
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+            //System.out.println(userRepository.findByUsername(user.get);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(LoginResponse.builder().accessToken("userError").build());
+        } else if (userRepository.findByMail(user.getMail()).isPresent()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(LoginResponse.builder().accessToken("mailError").build());
         }else {
             try {
-
+                System.out.print("Osea digamos estaoms en eso");
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+                System.out.print("Osea digamos estaoms en eso2");
                 userRepository.save(user);
 
+                var jwtToken = jwtService.generateToken(user);
 
-                return ResponseEntity.ok("ok");
+                return ResponseEntity.ok(LoginResponse.builder().accessToken(jwtToken).build());
             } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(LoginResponse.builder().accessToken("error").build());
             }
         }
 
     }
-    public ResponseEntity<String> login(Login login){
+    public ResponseEntity<LoginResponse> login(Login login){
 
-
-        List<User> users = userRepository.findAll();
-        for(User user : users){
-            if (user.getUsername().equals(login.getUser()) && user.getPassword().equals(login.getPass())){
-                System.out.println("TODO BIEN");
-                return ResponseEntity.ok("Usuario autenticado correctamente");
-            }
-        }
-        //System.out.println("TODO MAL");
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales inválidas");
-
+        //authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login.getUser(), login.getPass()));
+        //var user = userRepository.findByUsername(login.getUser()).orElseThrow();
+        
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                                                login.getUser(),
+                                                login.getPass()));
+        var user = userRepository.findByUsername(login.getUser())
+                .orElseThrow();
+        var jwtToken = jwtService.generateToken(user);
+        return ResponseEntity.ok(LoginResponse.builder().accessToken(jwtToken).build());
 
     }
 
     public User testing(String username){
 
-        System.out.println(userRepository.findByUsername(username).getApellido());
-        return userRepository.findByUsername(username);
+        System.out.println(userRepository.findByUsername(username).get().getApellido());
+        return userRepository.findByUsername(username).get();
     }
 
 

@@ -40,7 +40,7 @@ public class OrderService implements OrderServiceInterface{
 
     public ResponseEntity<String> createOrder(CartModel cartModel){
         
-        Optional<User> compradorOptional = Optional.of(userRepository.findByUsername(cartModel.getUsername_comprador()));
+        Optional<User> compradorOptional = userRepository.findByUsername(cartModel.getUsername_comprador());
         if (compradorOptional.isPresent()){
             if (!checkStock(cartModel.getProductList())){
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("No hay stock de todos los productos");
@@ -97,7 +97,7 @@ public class OrderService implements OrderServiceInterface{
 
     public ResponseEntity<List<OrderResponse>> getOrderByUserId(String username) throws IOException, SQLException{
 
-        Optional<User> optionalUser = Optional.of(userRepository.findByUsername(username));
+        Optional<User> optionalUser = userRepository.findByUsername(username);
         if (optionalUser.isPresent()){
             List<Orden> ordenList = optionalUser.get().getOrdenList();
             List<OrderResponse> orderResponses = new ArrayList<>();
