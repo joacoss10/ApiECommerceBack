@@ -3,6 +3,7 @@ package com.example.uade.tpo.backend.service;
 
 import com.example.uade.tpo.backend.auxiliar.OrderElementResponse;
 import com.example.uade.tpo.backend.auxiliar.OrderResponse;
+import com.example.uade.tpo.backend.auxiliar.UserResponse;
 import com.example.uade.tpo.backend.auxiliar.cart.CartModel;
 import com.example.uade.tpo.backend.auxiliar.cart.ProductModel;
 import com.example.uade.tpo.backend.models.*;
@@ -135,11 +136,15 @@ public class OrderService implements OrderServiceInterface{
             .build());
         }
         
+        UserResponse userResponse = new UserResponse();
+        userResponse.setApellido(orden.getUsuario().getApellido());
+        userResponse.setNombre(orden.getUsuario().getNombre());
+        userResponse.setUsername(orden.getUsuario().getUsername());
 
         return OrderResponse.builder()
             .id(orden.getId())
             .pago(orden.getPago())
-            .usuario(orden.getUsuario())
+            .usuario(userResponse)
             .ordenElementsList(orderElementResponses)
             .entregado(orden.getEntregado())
             .build();

@@ -18,6 +18,9 @@ import javax.sql.rowset.serial.SerialException;
 
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 @RestController
@@ -90,6 +93,14 @@ public class ProductController {
         
         return productService.addImage(id_producto, file);
     }
+
+
+    @GetMapping("/search")
+    public ResponseEntity<List<ProductResponse>> getMethodName(@RequestParam String param) throws IOException, SQLException {
+        return ResponseEntity.ok().body(productService.search(param));
+    }
+    
+
 
     @GetMapping("/test")
     public List<ProductResponse> testingg() throws IOException, SQLException{

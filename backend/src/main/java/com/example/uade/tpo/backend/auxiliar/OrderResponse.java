@@ -4,7 +4,7 @@ import java.util.List;
 
 
 import com.example.uade.tpo.backend.models.Pago;
-import com.example.uade.tpo.backend.models.User;
+
 
 
 import lombok.Builder;
@@ -16,7 +16,7 @@ public class OrderResponse {
     
     private long id;
 
-    private User usuario;
+    private UserResponse usuario;
 
     private List<OrderElementResponse> ordenElementsList;
 

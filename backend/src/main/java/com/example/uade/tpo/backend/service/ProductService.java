@@ -251,4 +251,21 @@ public class ProductService implements ProductServiceInterface{
         }
         
     }
+
+
+
+
+
+
+
+
+
+
+    public List<ProductResponse> search(String nombre) throws IOException, SQLException {
+        List<ProductResponse> list = new ArrayList<>();
+        for (Product product : productRepository.findByNombreContainingIgnoreCase(nombre)){
+            list.add(convertProduct(product));
+        }
+        return list;
+    }
 }
