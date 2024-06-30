@@ -37,9 +37,9 @@ public class UserService implements UserServiceInterface{
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(LoginResponse.builder().accessToken("mailError").build());
         }else {
             try {
-                System.out.print("Osea digamos estaoms en eso");
+                
                 user.setPassword(passwordEncoder.encode(user.getPassword()));
-                System.out.print("Osea digamos estaoms en eso2");
+                
                 userRepository.save(user);
 
                 var jwtToken = jwtService.generateToken(user);

@@ -22,6 +22,7 @@ public class JwtService {
 
     public String generateToken(
             UserDetails userDetails) {
+                System.out.println("Generating token for user: " + userDetails.getUsername()); // Verificación adicional
         return buildToken(userDetails, jwtExpiration);
     }
 
