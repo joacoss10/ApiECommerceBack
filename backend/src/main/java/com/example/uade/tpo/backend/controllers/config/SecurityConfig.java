@@ -25,6 +25,7 @@ public class SecurityConfig {
                     .authorizeHttpRequests(req -> req
                                     .requestMatchers("/user/**").permitAll()
                                     .requestMatchers("/product/get").permitAll()
+                                    .requestMatchers("/product/search").permitAll()
                                     .anyRequest()
                                     .authenticated())
                     .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))

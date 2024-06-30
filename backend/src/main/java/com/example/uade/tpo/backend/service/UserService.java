@@ -39,6 +39,7 @@ public class UserService implements UserServiceInterface{
             try {
                 
                 user.setPassword(passwordEncoder.encode(user.getPassword()));
+                //user.setRole();
                 
                 userRepository.save(user);
 
@@ -51,11 +52,13 @@ public class UserService implements UserServiceInterface{
         }
 
     }
+
     public ResponseEntity<LoginResponse> login(Login login){
 
         //authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login.getUser(), login.getPass()));
         //var user = userRepository.findByUsername(login.getUser()).orElseThrow();
-        
+        System.out.println(login.getUser() + " - " + login.getPass());
+
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                                                 login.getUser(),
                                                 login.getPass()));
