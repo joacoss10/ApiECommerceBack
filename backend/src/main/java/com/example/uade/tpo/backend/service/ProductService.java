@@ -268,4 +268,24 @@ public class ProductService implements ProductServiceInterface{
         }
         return list;
     }
+
+
+    public List<Long> getAllIds(){
+        List<Long> list = new ArrayList<>();
+        for (Product product : productRepository.findAll()){
+            list.add(product.getId_producto());
+        }
+        return list;
+    }
+
+
+    public ProductResponse getProductById(Long id) throws IOException, SQLException{
+        Optional <Product> producOptional = productRepository.findById(id);
+        if (producOptional.isPresent()){
+            return convertProduct(producOptional.get());
+        }
+        else{
+            return null;
+        }
+    }
 }

@@ -30,6 +30,7 @@ public class ProductController {
     private ProductService productService;
 
     @PostMapping(value = "/create", consumes = "multipart/form-data")
+    @CrossOrigin()
     public ResponseEntity<String> createProduct(
             @RequestParam("nombre") String nombre,
             @RequestParam("descripcion") String descripcion,
@@ -52,6 +53,7 @@ public class ProductController {
     }
 
     @GetMapping("/get")
+    @CrossOrigin()
     public ResponseEntity<List<ProductResponse>> getProducts(
             @RequestParam(name = "categoria", required = false) String categoria,
             @RequestParam(name = "page", defaultValue = "1") int page,
@@ -61,6 +63,7 @@ public class ProductController {
     }
 
     @GetMapping("/getByUsername")
+    @CrossOrigin()
     public ResponseEntity<List<ProductResponse>> getProductsByUsername(
             @RequestParam(name = "username", required = false) String username,
             @RequestParam(name = "page", defaultValue = "1") int page,
@@ -70,22 +73,26 @@ public class ProductController {
     }
 
     @PutMapping("/edit")
+    @CrossOrigin()
     public ResponseEntity<String> editStockProduct(@RequestBody Product product) {
         return productService.editStockProduct(product);
     }
 
     @DeleteMapping("/delete")
+    @CrossOrigin()
     public ResponseEntity<String> deleteProd(@RequestParam Long id) {
 
         return productService.deleteProd(id);
     }
 
     @DeleteMapping("/delete/image/")
+    @CrossOrigin()
     public ResponseEntity<String> deleteImage(Long id){
         return productService.deleteImage(id);
     }
 
     @PutMapping(value = "add/image", consumes = "multipart/form-data")
+    @CrossOrigin()
     public ResponseEntity<String> putMethodName(
         @RequestParam("id") Long id_producto,
         @RequestParam("file") MultipartFile file) throws SerialException, SQLException, IOException {
@@ -99,6 +106,17 @@ public class ProductController {
     public ResponseEntity<List<ProductResponse>> getMethodName(@RequestParam String param) throws IOException, SQLException {
         return ResponseEntity.ok().body(productService.search(param));
     }
+
+    @GetMapping("/get/ids")
+    public ResponseEntity<List<Long>> getIds() {
+        return ResponseEntity.ok().body(productService.getAllIds());
+    }
+
+    @GetMapping("/get/byid")
+    public ResponseEntity<ProductResponse> getProductById(@RequestParam Long id) throws IOException, SQLException {
+        return ResponseEntity.ok().body(productService.getProductById(id));
+    }
+    
     
 
 
