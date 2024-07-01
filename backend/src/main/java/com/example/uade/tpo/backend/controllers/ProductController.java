@@ -57,9 +57,11 @@ public class ProductController {
     public ResponseEntity<List<ProductResponse>> getProducts(
             @RequestParam(name = "categoria", required = false) String categoria,
             @RequestParam(name = "page", defaultValue = "1") int page,
-            @RequestParam(name = "pageSize", defaultValue = "2") int pageSize
+            @RequestParam(name = "pageSize", defaultValue = "2") int pageSize,
+            @RequestParam(name = "min", defaultValue = "0") double minPrice,
+            @RequestParam(name = "max", defaultValue = "99999999999") double maxPrice
     ) throws IOException, SQLException {
-        return productService.getProducts(categoria, page, pageSize);
+        return productService.getProducts(categoria, page, pageSize,minPrice,maxPrice);
     }
 
     @GetMapping("/getByUsername")
@@ -103,16 +105,19 @@ public class ProductController {
 
 
     @GetMapping("/search")
+    @CrossOrigin()
     public ResponseEntity<List<ProductResponse>> getMethodName(@RequestParam String param) throws IOException, SQLException {
         return ResponseEntity.ok().body(productService.search(param));
     }
 
     @GetMapping("/get/ids")
+    @CrossOrigin()
     public ResponseEntity<List<Long>> getIds() {
         return ResponseEntity.ok().body(productService.getAllIds());
     }
 
     @GetMapping("/get/byid")
+    @CrossOrigin()
     public ResponseEntity<ProductResponse> getProductById(@RequestParam Long id) throws IOException, SQLException {
         return ResponseEntity.ok().body(productService.getProductById(id));
     }
@@ -120,7 +125,8 @@ public class ProductController {
     
 
 
-    @GetMapping("/test")
+    @GetMapping("/get/all")
+    @CrossOrigin()
     public List<ProductResponse> testingg() throws IOException, SQLException{
         return productService.testingg();
     }

@@ -84,32 +84,19 @@ public class ProductService implements ProductServiceInterface{
 
     //GET PRODUCT
 
-    public ResponseEntity<List<ProductResponse>> getProducts(String categoria, int page, int pageSize) throws IOException, SQLException{
-        if (categoria == null || categoria.isEmpty() && page > 0 && pageSize > 0) {
+    public ResponseEntity<List<ProductResponse>> getProducts(String categoria, int page, int pageSize, double min, double max) throws IOException, SQLException {
+        if (page > 0 && pageSize > 0) {
             List<ProductResponse> productResponses = new ArrayList<>();
             Pageable pageable = PageRequest.of(page - 1, pageSize);
-
-
-            Slice<Product> productSlice = productRepository.findSlice(pageable);
-
-
-            if (productSlice.hasContent()) {
-
-                List<Product> products = productSlice.getContent();
-                for (Product product : products){
-                    productResponses.add(convertProduct(product));
-                }
-                return ResponseEntity.ok(productResponses);
+    
+            Slice<Product> productSlice;
+    
+            if (categoria == null || categoria.isEmpty()) {
+                productSlice = productRepository.findSlice(pageable);
             } else {
-
-                return ResponseEntity.notFound().build();
+                productSlice = productRepository.findByCategoriaAndPrecioBetween(categoria, min, max, pageable);
             }
-        }else if (page > 0 && pageSize > 0) {
-            List<ProductResponse> productResponses = new ArrayList<>();
-            Pageable pageable = PageRequest.of(page - 1, pageSize);
-
-            Slice<Product> productSlice = productRepository.findByCategoria(categoria, pageable);
-
+    
             if (productSlice.hasContent()) {
                 List<Product> products = productSlice.getContent();
                 for (Product product : products) {
@@ -120,7 +107,7 @@ public class ProductService implements ProductServiceInterface{
                 return ResponseEntity.notFound().build();
             }
         }
-
+    
         return ResponseEntity.badRequest().build();
     }
 
@@ -168,6 +155,7 @@ public class ProductService implements ProductServiceInterface{
     public List<ProductResponse> testingg() throws IOException, SQLException{
         List<ProductResponse> productResponses = new ArrayList<>();
         for (Product product : productRepository.findAll()){
+
             productResponses.add(convertProduct(product));
         }
 

@@ -23,4 +23,14 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("SELECT p FROM Product p WHERE LOWER(p.nombre) LIKE LOWER(CONCAT('%', :nombre, '%'))")
     List<Product> findByNombreContainingIgnoreCase(@Param("nombre") String nombre);
+
+
+    //GET PRODS
+    @Query("SELECT p FROM Product p WHERE p.categoria = :categoria AND p.precio BETWEEN :min AND :max")
+    Slice<Product> findByCategoriaAndPrecioBetween(
+        @Param("categoria") String categoria, 
+        @Param("min") double min, 
+        @Param("max") double max, 
+        Pageable pageable
+    );
 }

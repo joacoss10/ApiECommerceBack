@@ -28,6 +28,7 @@ public class SecurityConfig {
                                     .requestMatchers("/product/search").permitAll()
                                     .requestMatchers("/product/get/ids").permitAll()
                                     .requestMatchers("/product/get/byid").permitAll()
+                                    .requestMatchers("/product/get/all").permitAll()
                                     .anyRequest()
                                     .authenticated())
                     .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))

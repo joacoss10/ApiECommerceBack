@@ -21,7 +21,7 @@ public interface ProductServiceInterface {
 
     //GET PRODUCT
 
-    public ResponseEntity<List<ProductResponse>> getProducts(String categoria, int page, int pageSize) throws IOException, SQLException;
+    public ResponseEntity<List<ProductResponse>> getProducts(String categoria, int page, int pageSize, double min, double max) throws IOException, SQLException;
 
     public ResponseEntity<List<ProductResponse>> getProductsByUsername(String username, int page, int pageSize) throws IOException, SQLException;
 
