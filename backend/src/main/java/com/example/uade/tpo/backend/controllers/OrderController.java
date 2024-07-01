@@ -24,16 +24,19 @@ public class OrderController {
     OrderService orderService;
 
     @PostMapping("/create")
+    @CrossOrigin()
     public ResponseEntity<String> createOrder(@RequestBody CartModel cartModel){
         return orderService.createOrder(cartModel);
     }
 
     @GetMapping("/get")
+    @CrossOrigin()
     public ResponseEntity<List<OrderResponse>> getOrderByUserId(@RequestParam String username) throws IOException, SQLException{
         return orderService.getOrderByUserId(username);
     }
 
     @PutMapping("/delivered/{id}")
+    @CrossOrigin()
     public ResponseEntity<String> putMethodName(@PathVariable Long id) {        
         return orderService.setEntregadoTrue(id);
     }

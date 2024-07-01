@@ -21,7 +21,7 @@ public class CuponController {
     @Autowired
     CuponService cuponService;
 
-    @GetMapping()
+    @GetMapping("/create")
     public ResponseEntity<String> validarCupon(@RequestParam String cupon) {
         return ResponseEntity.status(HttpStatus.OK).body(cuponService.validarCupon(cupon));
     }

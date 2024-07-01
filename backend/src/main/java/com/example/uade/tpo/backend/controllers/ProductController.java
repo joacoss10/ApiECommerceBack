@@ -57,12 +57,25 @@ public class ProductController {
     public ResponseEntity<List<ProductResponse>> getProducts(
             @RequestParam(name = "categoria", required = false) String categoria,
             @RequestParam(name = "page", defaultValue = "1") int page,
-            @RequestParam(name = "pageSize", defaultValue = "2") int pageSize,
+            @RequestParam(name = "pageSize", defaultValue = "8") int pageSize,
             @RequestParam(name = "min", defaultValue = "0") double minPrice,
-            @RequestParam(name = "max", defaultValue = "99999999999") double maxPrice
+            @RequestParam(name = "max", defaultValue = "0") double maxPrice
     ) throws IOException, SQLException {
         return productService.getProducts(categoria, page, pageSize,minPrice,maxPrice);
     }
+
+
+    @GetMapping("/get/pages")
+    @CrossOrigin()
+    public ResponseEntity<Integer> getPages(
+            @RequestParam(name = "categoria", required = false) String categoria,
+            @RequestParam(name = "pageSize", defaultValue = "8") int pageSize,
+            @RequestParam(name = "min", defaultValue = "0") double minPrice,
+            @RequestParam(name = "max", defaultValue = "0") double maxPrice
+    ) throws IOException, SQLException {
+        return productService.getPages(categoria, pageSize,minPrice,maxPrice);
+    }
+
 
     @GetMapping("/getByUsername")
     @CrossOrigin()

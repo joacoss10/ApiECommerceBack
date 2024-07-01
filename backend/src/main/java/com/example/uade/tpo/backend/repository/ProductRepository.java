@@ -33,4 +33,25 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
         @Param("max") double max, 
         Pageable pageable
     );
+
+    @Query("SELECT p FROM Product p WHERE p.precio BETWEEN :min AND :max")
+    Slice<Product> findByPrecioBetween(
+            @Param("min") double min,
+            @Param("max") double max,
+            Pageable pageable
+    );
+
+
+
+
+    //COUNT PAGES
+    
+    long countByCategoria(String categoria);
+
+    
+    long countByPrecioBetween(double min, double max);
+
+    
+    @Query("SELECT COUNT(p) FROM Product p WHERE p.categoria = :categoria AND p.precio BETWEEN :min AND :max")
+    long countByCategoriaAndPrecioBetween(@Param("categoria") String categoria, @Param("min") double min, @Param("max") double max);
 }

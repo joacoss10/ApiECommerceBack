@@ -24,10 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.sql.Blob;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import javax.sql.rowset.serial.SerialException;
 
@@ -90,10 +87,17 @@ public class ProductService implements ProductServiceInterface{
             Pageable pageable = PageRequest.of(page - 1, pageSize);
     
             Slice<Product> productSlice;
-    
-            if (categoria == null || categoria.isEmpty()) {
+            System.out.println(min +" - " + max);
+            if ((categoria == null || categoria.isEmpty()) && min == 0 && max == 0) {                 //categoria y precio null
+                // Sin categoría y sin filtrado de precio
                 productSlice = productRepository.findSlice(pageable);
-            } else {
+            } else if (categoria == null || categoria.isEmpty()) {                                    //categoria null, precio on
+                // Sin categoría pero con filtrado de precio
+                productSlice = productRepository.findByPrecioBetween(min, max, pageable);
+            } else if (min == 0 && max == 0) {                                                        //categoria on, precio null
+                productSlice = productRepository.findByCategoria(categoria,pageable);
+            } else {                                                                                  //categoria on, precio on
+                // Con categoría y con o sin filtrado de precio
                 productSlice = productRepository.findByCategoriaAndPrecioBetween(categoria, min, max, pageable);
             }
     
@@ -109,6 +113,55 @@ public class ProductService implements ProductServiceInterface{
         }
     
         return ResponseEntity.badRequest().build();
+    }
+
+    public ResponseEntity<Integer> getPages(String categoria, int pageSize, double min, double max) throws IOException, SQLException {
+        //int totalPages;
+        List<Product> list = productRepository.findAll();
+        int totalProducts = 0;
+        if ((categoria == null || categoria.isEmpty()) && min == 0 && max == 0) {
+            System.out.println(list.size());
+            totalProducts = list.size();
+            System.out.println("opcion 1");
+            
+        } else if (categoria != null && min == 0 && max == 0) {
+            System.out.println("opcion 2");
+            for (Product p : list){
+                if (Objects.equals(p.getCategoria().toLowerCase(), categoria.toLowerCase())){
+                    totalProducts++;
+                }
+            }
+            
+
+        } else if ((categoria == null || categoria.isEmpty()) && (min != 0 || max != 0)) {
+            System.out.println("opcion 3");
+            for (Product p : list){
+                if (min <= p.getPrecio() && p.getPrecio()<=max){
+                    totalProducts++;
+                }
+            }
+        } else if (categoria != null && (min != 0 || max != 0)) {
+            System.out.println("opcion 4");
+            for (Product p : list){
+                if (Objects.equals(p.getCategoria().toLowerCase(), categoria.toLowerCase()) && min <= p.getPrecio() && p.getPrecio()<=max){
+                    totalProducts++;
+                }
+            }
+        }
+        
+        return ResponseEntity.ok(calculateMultiplier(totalProducts));
+    }
+
+    private int calculateMultiplier(int number) {
+        int multiplier = (number / 8) + 1; // Dividir por 8 y sumar 1 para asegurar que sea mayor
+        int result = multiplier * 8; // Multiplicar por 8 para obtener el resultado
+        
+        // Verificar si la diferencia es mayor a 8 y ajustar si es necesario
+        if (result - number > 8) {
+            multiplier--; // Reducir el multiplicador en 1 si la diferencia es mayor a 8
+        }
+        
+        return multiplier;
     }
 
     //EDIT PRODUCT
