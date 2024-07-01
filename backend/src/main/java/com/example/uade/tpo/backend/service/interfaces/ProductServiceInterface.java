@@ -39,6 +39,11 @@ public interface ProductServiceInterface {
 
     public ResponseEntity<String> deleteImage(Long id);
 
+
+
+
+    public ResponseEntity<Integer> getPages(String categoria, int pageSize, double min, double max) throws IOException, SQLException;
+
     
     
 }
