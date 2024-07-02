@@ -30,7 +30,7 @@ public class SecurityConfig {
                                     .requestMatchers("/product/get/byid").permitAll()
                                     .requestMatchers("/product/get/all").permitAll()
                                     .requestMatchers("/product/get/pages").permitAll()
-                                    .requestMatchers("/cupon").permitAll()
+                                    .requestMatchers("/cupon/check").permitAll()
                                     .anyRequest()
                                     .authenticated())
                     .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
